@@ -1,0 +1,181 @@
+/* Основные стили для всего сайта */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1a1a1a;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Заголовок */
+header {
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 3rem;
+    text-align: center;
+    color: #e3e3e3;
+    font-weight: bold;
+}
+
+/* Стили для основного контента */
+main {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #2c2f36;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Статус онлайн */
+#user-count {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+/* Стили для сообщений */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;  /* Прокрутка по вертикали */
+}
+
+li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #3e4147;
+    word-wrap: break-word;  /* Разрывать длинные слова */
+    word-break: break-word; /* Разрывать слова, если они не помещаются */
+}
+
+li.user-message {
+    background-color: #4d90fe;
+}
+
+li.other-message {
+    background-color: #888;
+}
+
+.image-message {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+/* Стили для модального окна */
+.modal {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background: #2c2f36;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #4d90fe;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #357ae8;
+}
+
+/* Стили для загрузки файлов */
+.file-upload {
+    margin-top: 20px;
+}
+
+button {
+    margin-top: 10px;
+}
+
+/* Стили для контейнера чата */
+.chat-container {
+    max-width: 100%;
+    height: 500px; /* Ограничение по высоте */
+    overflow-y: auto; /* Прокрутка по вертикали */
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+/* Стили для отдельных сообщений */
+.message {
+    display: block;
+    word-wrap: break-word;  /* Разрывать слова, если они длинные */
+    word-break: break-word; /* Разрывать слово, если оно слишком длинное для строки */
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    max-width: 90%;  /* Ограничение по ширине */
+    overflow: hidden;  /* Скрываем содержимое, если оно выходит за пределы */
+    white-space: pre-wrap;  /* Разрываем строки, если нужно */
+}
+
+/* Стили для сообщений от пользователя */
+.user-message {
+    background-color: #cfe2f3;
+    text-align: left;
+}
+
+/* Стили для сообщений от других пользователей */
+.other-message {
+    background-color: #f0f0f0;
+    text-align: right;
+}
+
+/* Прокрутка контейнера сообщений */
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}

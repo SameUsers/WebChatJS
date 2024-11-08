@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeChat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>LifeChat</h1>
+    </header>
+    <main>
+        <div id="user-count">Users online: 0</div> <!-- Показываем количество пользователей -->
+
+        <ul id="messages"></ul>
+
+        <!-- Модальное окно для пароля -->
+        <div id="password-modal" class="modal">
+            <div class="modal-content">
+                <h2>Enter Password</h2>
+                <input type="password" id="passwordInput" placeholder="Enter password" />
+                <button onclick="connectToChat()">Connect</button>
+                <p id="error-message" style="color: red;"></p>
+            </div>
+        </div>
+
+        <input id="messageInput" autocomplete="off" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+
+        <div class="file-upload">
+            <button onclick="triggerFileInput()">Upload File</button>
+            <input id="fileInput" type="file" onchange="sendFile(event)" />
+        </div>
+    </main>
+
+    <script>
+        const socket = io();
+const messagesList = document.getElementById('messages');
+const input = document.getElementById('messageInput');
+const passwordInput = document.getElementById('passwordInput');
+const passwordModal = document.getElementById('password-modal');
+const fileInput = document.getElementById('fileInput');
+const userCountElement = document.getElementById('user-count');
+const errorMessage = document.getElementById('error-message');
+let userPassword = ''; // Переменная для хранения пароля
+
+// Генерация случайного идентификатора для пользователя
+function generateUserId() {
+    return 'user-' + Math.random().toString(36).substr(2, 9);
+}
+
+let userId = generateUserId(); // Присваиваем пользователю уникальный идентификатор
+
+// Получаем пароль от сервера
+socket.on('passwordRequest', (data) => {
+    console.log('Server generated password:', data.password); // Для отладки
+});
+
+// Обработчик для ввода пароля
+function connectToChat() {
+    const password = passwordInput.value.trim();
+    if (password) {
+        userPassword = password;
+        socket.emit('password', password); // Отправляем пароль на сервер
+    }
+}
+
+// Обработка успешного подключения
+socket.on('passwordSuccess', (data) => {
+    passwordModal.style.display = 'none'; // Скрываем окно ввода пароля
+    alert(data.message);
+});
+
+// Обработка ошибки при неправильном пароле
+socket.on('passwordError', (data) => {
+    errorMessage.textContent = data.message;
+});
+
+// Обработка сообщений
+socket.on('chat message', ({ user, message, timestamp, type, fileUrl }) => {
+    addMessage(user, message, timestamp, type, fileUrl);
+});
+
+// Обновление количества пользователей
+socket.on('user count', (userCount) => {
+    userCountElement.textContent = `Users online: ${userCount}`;
+});
+
+// Функция для отправки сообщений
+function sendMessage() {
+    const msg = input.value;
+    if (msg.trim() && userPassword) {
+        socket.emit('chat message', { user: userId, message: msg, type: 'text' });
+        input.value = '';
+    }
+}
+
+// Функция для отображения сообщений
+function addMessage(user, message, timestamp, type, fileUrl) {
+    const item = document.createElement('li');
+    const time = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
+    const userClass = user === userId ? 'user-message' : 'other-message';
+
+    if (type === 'text') {
+        item.textContent = `${time} ${user}: ${message}`;
+    } else if (type === 'image') {
+        item.innerHTML = `${time} ${user}: <img src="${fileUrl}" class="image-message" />`;
+    } else if (type === 'file') {
+        item.innerHTML = `${time} ${user}: <a href="${fileUrl}" download>Download File</a>`;
+    }
+
+    item.classList.add(userClass);
+    messagesList.appendChild(item);
+    messagesList.scrollTop = messagesList.scrollHeight;
+}
+
+// Функция для вызова диалога загрузки файла
+function triggerFileInput() {
+    fileInput.click();
+}
+
+// Функция для отправки файла
+function sendFile(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+            socket.emit('chat message', { user: userId, message: file.name, type: 'file', fileUrl: reader.result });
+        };
+        reader.readAsDataURL(file);
+    }
+}
+    </script>
+</body>
+</html>
